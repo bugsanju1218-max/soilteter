@@ -1,0 +1,7 @@
+{
+  "name": "Copy of Voice-Assisted AI Soil Analyzer",
+  "description": "An intelligent soil testing application that uses AI to recommend suitable crops based on soil parameters like pH, moisture, and temperature. The app provides analysis results through a visual interface and a voice assistant.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

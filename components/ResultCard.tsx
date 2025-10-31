@@ -1,14 +1,15 @@
-
 import React, { useState, useEffect } from 'react';
-import type { AnalysisResult, PlantRecommendation, Amendment } from '../types';
+import type { AnalysisResult, PlantRecommendation, Amendment, SoilData, HistoryEntry } from '../types';
 import { useSettings } from '../contexts/SettingsContext';
 import { useVoiceAssistant } from '../hooks/useVoiceAssistant';
 import { useNotifications } from '../hooks/useNotifications';
 import { translateAnalysis, translateText } from '../services/geminiService';
-import { LoadingIcon, PlantIcon, ScienceIcon, SpeakerIcon, BellIcon, CheckCircleIcon, GlobeIcon, StopIcon } from './Icons';
+import { downloadReport } from '../services/reportGenerator';
+import { LoadingIcon, PlantIcon, ScienceIcon, SpeakerIcon, BellIcon, CheckCircleIcon, GlobeIcon, StopIcon, DownloadIcon } from './Icons';
 
 interface ResultCardProps {
   result: AnalysisResult | null;
+  data: SoilData | null;
   isLoading: boolean;
 }
 
@@ -54,8 +55,8 @@ const ReminderSetter: React.FC<{ item: PlantRecommendation | Amendment }> = ({ i
 }
 
 
-const ResultCard: React.FC<ResultCardProps> = ({ result, isLoading }) => {
-    const { settings, t } = useSettings();
+const ResultCard: React.FC<ResultCardProps> = ({ result, data, isLoading }) => {
+    const { settings, t, convertTemperature } = useSettings();
     const [activeReminder, setActiveReminder] = useState<string | null>(null);
     
     // State for translation
@@ -136,8 +137,34 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, isLoading }) => {
     };
 
     const handleSpeak = () => {
-        speak(textToSpeak);
-    }
+        let lang: 'en' | 'te' | 'hi' | 'es' = 'en'; // Default
+        
+        if (displayLanguage === 'original') {
+            lang = settings.uiLanguage;
+        } else if (displayLanguage.startsWith('te')) {
+            lang = 'te';
+        } else if (displayLanguage.startsWith('hi')) {
+            lang = 'hi';
+        } else if (displayLanguage.startsWith('es')) {
+            lang = 'es';
+        } else if (displayLanguage.startsWith('en')) {
+            lang = 'en';
+        }
+
+        speak(textToSpeak, lang);
+    };
+
+    const handleDownload = () => {
+        if (!result || !data || !displayResult) return;
+        
+        // Use the currently displayed result (which could be translated) for the report
+        const entry: HistoryEntry = {
+            id: new Date().toISOString(),
+            data,
+            result: displayResult
+        };
+        downloadReport(entry, settings, t, convertTemperature);
+    };
 
 
     if (isLoading) {
@@ -186,6 +213,10 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, isLoading }) => {
 
             <button onClick={handleSpeak} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors" aria-label={t('readAloud')}>
                 {isGenerating ? <LoadingIcon className="h-6 w-6 text-gray-600 dark:text-gray-400"/> : isSpeaking ? <StopIcon className="h-6 w-6 text-red-500"/> : <SpeakerIcon className="h-6 w-6 text-gray-600 dark:text-gray-400"/>}
+            </button>
+
+            <button onClick={handleDownload} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors" aria-label={t('downloadReport')}>
+                <DownloadIcon className="h-6 w-6 text-gray-600 dark:text-gray-400"/>
             </button>
          </div>
       </div>

@@ -1,4 +1,5 @@
 
+
 const en = {
     soilSage: "Soil Sage",
     soilDataInput: "Soil Data Input",
@@ -102,6 +103,18 @@ const en = {
     removeImage: "Remove image",
     chooseImage: "Choose an image",
     pngJpgUpTo4MB: "PNG or JPG, up to 4MB",
+    downloadReport: "Download Report",
+    reasoning: "Reasoning",
+    smartAlerts: "Smart Alerts",
+    smartAlertsDesc: "Get notified when soil values go outside your preferred range.",
+    enableAlerts: "Enable Smart Alerts",
+    phRange: "pH Range",
+    moistureRange: "Moisture Range (%)",
+    alertTitle: "Soil Alert!",
+    phLowAlert: "pH is low: {{value}}. Recommended range is {{min}}-{{max}}.",
+    phHighAlert: "pH is high: {{value}}. Recommended range is {{min}}-{{max}}.",
+    moistureLowAlert: "Moisture is low: {{value}}%. Recommended range is {{min}}-{{max}}%.",
+    moistureHighAlert: "Moisture is high: {{value}}%. Recommended range is {{min}}-{{max}}%.",
 };
 
 const te: typeof en = {
@@ -207,6 +220,18 @@ const te: typeof en = {
     removeImage: "చిత్రాన్ని తీసివేయండి",
     chooseImage: "ఒక చిత్రాన్ని ఎంచుకోండి",
     pngJpgUpTo4MB: "PNG లేదా JPG, 4MB వరకు",
+    downloadReport: "రిపోర్ట్ డౌన్‌లోడ్ చేయండి",
+    reasoning: "కారణం",
+    smartAlerts: "స్మార్ట్ హెచ్చరికలు",
+    smartAlertsDesc: "మట్టి విలువలు మీ ప్రాధాన్య పరిధికి వెలుపల వెళ్లినప్పుడు తెలియజేయండి.",
+    enableAlerts: "స్మార్ట్ హెచ్చరికలను ప్రారంభించండి",
+    phRange: "pH పరిధి",
+    moistureRange: "తేమ పరిధి (%)",
+    alertTitle: "మట్టి హెచ్చరిక!",
+    phLowAlert: "pH తక్కువగా ఉంది: {{value}}. సిఫార్సు చేయబడిన పరిధి {{min}}-{{max}}.",
+    phHighAlert: "pH ఎక్కువగా ఉంది: {{value}}. సిఫార్సు చేయబడిన పరిధి {{min}}-{{max}}.",
+    moistureLowAlert: "తేమ తక్కువగా ఉంది: {{value}}%. సిఫార్సు చేయబడిన పరిధి {{min}}-{{max}}%.",
+    moistureHighAlert: "తేమ ఎక్కువగా ఉంది: {{value}}%. సిఫార్సు చేయబడిన పరిధి {{min}}-{{max}}%.",
 };
 
 

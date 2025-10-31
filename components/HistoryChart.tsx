@@ -22,7 +22,7 @@ const HistoryChart: React.FC<HistoryChartProps> = ({ history }) => {
     return null; // Don't render a chart for less than 2 data points
   }
 
-  const getMinMax = (key: 'ph' | 'moisture' | 'temperature') => {
+  const getMinMax = (key: keyof HistoryEntry['data']) => {
     const values = chartData.map(entry => 
       key === 'temperature' ? convertTemperature(entry.data[key]) : entry.data[key]
     );
@@ -32,14 +32,20 @@ const HistoryChart: React.FC<HistoryChartProps> = ({ history }) => {
   const [minPh, maxPh] = getMinMax('ph');
   const [minMoisture, maxMoisture] = getMinMax('moisture');
   const [minTemp, maxTemp] = getMinMax('temperature');
+  const [minN, maxN] = getMinMax('nitrogen');
+  const [minP, maxP] = getMinMax('phosphorus');
+  const [minK, maxK] = getMinMax('potassium');
+
 
   const getCoords = (value: number, min: number, max: number, index: number) => {
     const x = padding + (index / (chartData.length - 1)) * (width - padding * 2);
-    const y = height - padding - ((value - min) / (max - min === 0 ? 1 : max - min)) * (height - padding * 2);
+    // Handle the case where min and max are the same to avoid division by zero
+    const yRange = max - min === 0 ? 1 : max - min;
+    const y = height - padding - ((value - min) / yRange) * (height - padding * 2);
     return { x, y };
   };
 
-  const generatePath = (key: 'ph' | 'moisture' | 'temperature', min: number, max: number) => {
+  const generatePath = (key: keyof HistoryEntry['data'], min: number, max: number) => {
     return chartData
       .map((entry, index) => {
         const val = key === 'temperature' ? convertTemperature(entry.data[key]) : entry.data[key];
@@ -52,6 +58,9 @@ const HistoryChart: React.FC<HistoryChartProps> = ({ history }) => {
   const pathPh = generatePath('ph', minPh, maxPh);
   const pathMoisture = generatePath('moisture', minMoisture, maxMoisture);
   const pathTemp = generatePath('temperature', minTemp, maxTemp);
+  const pathN = generatePath('nitrogen', minN, maxN);
+  const pathP = generatePath('phosphorus', minP, maxP);
+  const pathK = generatePath('potassium', minK, maxK);
   
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 border border-gray-200/80 dark:border-slate-700">
@@ -70,6 +79,10 @@ const HistoryChart: React.FC<HistoryChartProps> = ({ history }) => {
             <path d={pathPh} fill="none" stroke="#ef4444" strokeWidth="2" />
             <path d={pathMoisture} fill="none" stroke="#3b82f6" strokeWidth="2" />
             <path d={pathTemp} fill="none" stroke="#f97316" strokeWidth="2" />
+            <path d={pathN} fill="none" stroke="#22c55e" strokeWidth="2" />
+            <path d={pathP} fill="none" stroke="#8b5cf6" strokeWidth="2" />
+            <path d={pathK} fill="none" stroke="#eab308" strokeWidth="2" />
+
 
             {/* Data points */}
             {chartData.map((entry, index) => (
@@ -77,14 +90,20 @@ const HistoryChart: React.FC<HistoryChartProps> = ({ history }) => {
                     <circle cx={getCoords(entry.data.ph, minPh, maxPh, index).x} cy={getCoords(entry.data.ph, minPh, maxPh, index).y} r="3" fill="#ef4444" />
                     <circle cx={getCoords(entry.data.moisture, minMoisture, maxMoisture, index).x} cy={getCoords(entry.data.moisture, minMoisture, maxMoisture, index).y} r="3" fill="#3b82f6" />
                     <circle cx={getCoords(convertTemperature(entry.data.temperature), minTemp, maxTemp, index).x} cy={getCoords(convertTemperature(entry.data.temperature), minTemp, maxTemp, index).y} r="3" fill="#f97316" />
+                    <circle cx={getCoords(entry.data.nitrogen, minN, maxN, index).x} cy={getCoords(entry.data.nitrogen, minN, maxN, index).y} r="3" fill="#22c55e" />
+                    <circle cx={getCoords(entry.data.phosphorus, minP, maxP, index).x} cy={getCoords(entry.data.phosphorus, minP, maxP, index).y} r="3" fill="#8b5cf6" />
+                    <circle cx={getCoords(entry.data.potassium, minK, maxK, index).x} cy={getCoords(entry.data.potassium, minK, maxK, index).y} r="3" fill="#eab308" />
                 </g>
             ))}
         </svg>
       </div>
-       <div className="flex justify-center gap-4 mt-4 text-xs text-gray-600 dark:text-gray-400">
+       <div className="grid grid-cols-3 sm:grid-cols-6 justify-center gap-x-4 gap-y-2 mt-4 text-xs text-gray-600 dark:text-gray-400">
           <div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-red-500"></span>{t('ph')}</div>
           <div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-blue-500"></span>{t('moisture')} (%)</div>
           <div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-orange-500"></span>{t('temp')} ({settings.unit === 'Celsius' ? '°C' : '°F'})</div>
+          <div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-green-500"></span>{t('n')} (ppm)</div>
+          <div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-violet-500"></span>{t('p')} (ppm)</div>
+          <div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-yellow-500"></span>{t('k')} (ppm)</div>
         </div>
     </div>
   );

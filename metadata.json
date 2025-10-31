@@ -1,7 +1,5 @@
 {
-  "name": "Copy of Voice-Assisted AI Soil Analyzer",
-  "description": "An intelligent soil testing application that uses AI to recommend suitable crops based on soil parameters like pH, moisture, and temperature. The app provides analysis results through a visual interface and a voice assistant.",
-  "requestFramePermissions": [
-    "microphone"
-  ]
+  "name": "ESP32 Web Bluetooth Sensor Dashboard",
+  "description": "A web application that connects to an ESP32 device using the Web Bluetooth API to display live sensor readings for soil moisture, temperature, and pH.",
+  "requestFramePermissions": []
 }

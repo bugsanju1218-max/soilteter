@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Type, Modality } from "@google/genai";
 import type { SoilData, AnalysisResult } from '../types';
 
@@ -87,10 +86,16 @@ const responseSchema = {
 };
 
 
-export const analyzeSoil = async (data: SoilData, language: 'en' | 'te', image?: {data: string, mimeType: string} | null): Promise<AnalysisResult> => {
+export const analyzeSoil = async (
+    data: SoilData, 
+    language: 'en' | 'te', 
+    image?: {data: string, mimeType: string} | null,
+    location?: {latitude: number | null, longitude: number | null} | null
+): Promise<AnalysisResult> => {
     const prompt = `
         Analyze the following soil data and provide a detailed report.
         ${image ? 'In addition to the data below, analyze the provided soil image for its visual characteristics like color and texture to improve the accuracy of your report.' : ''}
+        ${(location && location.latitude && location.longitude) ? `The user's location is Latitude: ${location.latitude}, Longitude: ${location.longitude}. Use this location to provide region-specific plant and amendment recommendations suitable for their local climate and conditions.` : ''}
         Soil Data:
         - pH: ${data.ph}
         - Moisture: ${data.moisture}%
@@ -273,7 +278,24 @@ export const translateText = async (
     }
 };
 
-export const generateSpeech = async (text: string): Promise<string> => {
+export const generateSpeech = async (text: string, language: 'en' | 'te' | 'hi' | 'es'): Promise<string> => {
+    let voiceName = 'Kore'; // Default English
+    switch (language) {
+        case 'te':
+            voiceName = 'Puck'; // Telugu
+            break;
+        case 'hi':
+            voiceName = 'Charon'; // Suitable for Hindi
+            break;
+        case 'es':
+            voiceName = 'Fenrir'; // Suitable for Spanish
+            break;
+        case 'en':
+        default:
+            voiceName = 'Kore'; // English
+            break;
+    }
+
     try {
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash-preview-tts",
@@ -282,7 +304,7 @@ export const generateSpeech = async (text: string): Promise<string> => {
                 responseModalities: [Modality.AUDIO],
                 speechConfig: {
                     voiceConfig: {
-                        prebuiltVoiceConfig: { voiceName: 'Kore' },
+                        prebuiltVoiceConfig: { voiceName },
                     },
                 },
             },

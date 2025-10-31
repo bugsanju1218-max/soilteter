@@ -1,4 +1,3 @@
-
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { generateSpeech, decode, decodeAudioData } from '../services/geminiService';
 
@@ -16,7 +15,7 @@ export const useVoiceAssistant = () => {
         }
     }, []);
 
-    const speak = useCallback(async (textToSpeak?: string) => {
+    const speak = useCallback(async (textToSpeak?: string, language: 'en' | 'te' | 'hi' | 'es' = 'en') => {
         // If speaking or generating, the button press should function as a "stop" button
         if (isSpeaking || isGenerating) {
             if (sourceRef.current) {
@@ -42,7 +41,7 @@ export const useVoiceAssistant = () => {
 
         try {
             setIsGenerating(true);
-            const base64Audio = await generateSpeech(textToSpeak);
+            const base64Audio = await generateSpeech(textToSpeak, language);
             
             // If the user cancelled during generation, don't proceed.
             if (!isGenerating) return;

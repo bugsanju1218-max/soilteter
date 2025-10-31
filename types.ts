@@ -1,10 +1,23 @@
+
+export interface SensorData {
+  temperature: number | null;
+  moisture: number | null;
+  ph: number | null;
+}
+
+export interface LogEntry {
+  timestamp: string;
+  message: string;
+}
+
+// FIX: Define and export all missing types to resolve import errors across the application.
 export interface SoilData {
   ph: number;
-  moisture: number; // as a percentage
-  temperature: number; // in Celsius
-  nitrogen: number; // in ppm
-  phosphorus: number; // in ppm
-  potassium: number; // in ppm
+  moisture: number;
+  temperature: number;
+  nitrogen: number;
+  phosphorus: number;
+  potassium: number;
 }
 
 export interface PlantRecommendation {
@@ -15,13 +28,13 @@ export interface PlantRecommendation {
 }
 
 export interface Amendment {
-    name: string;
-    reasoning: string;
-    application_rate: string;
+  name: string;
+  reasoning: string;
+  application_rate: string;
 }
 
 export interface AnalysisResult {
-  soil_health_score: number; // 0-100
+  soil_health_score: number;
   interpretation: string;
   recommendations: {
     plants: PlantRecommendation[];
@@ -39,9 +52,14 @@ export type TemperatureUnit = 'Celsius' | 'Fahrenheit';
 
 export interface Settings {
   unit: TemperatureUnit;
-  language: string; // Voice language
-  uiLanguage: 'en' | 'te'; // UI language
+  language: string; // e.g., 'te-IN', 'en-US'
+  uiLanguage: 'en' | 'te';
   theme: 'light' | 'dark' | 'system';
+  alerts: {
+    enabled: boolean;
+    ph: { min: number; max: number };
+    moisture: { min: number; max: number };
+  };
 }
 
 export interface GeolocationState {

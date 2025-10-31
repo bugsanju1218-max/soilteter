@@ -1,4 +1,3 @@
-
 import React, { useState, FormEvent, useCallback } from 'react';
 import type { SoilData } from '../types';
 import { useGeolocation } from '../hooks/useGeolocation';
@@ -10,7 +9,7 @@ import type { TranslationKey } from '../i18n/locales';
 import { parseSoilDataFromText } from '../services/geminiService';
 
 interface SoilInputFormProps {
-  onAnalyze: (data: SoilData, image?: {data: string, mimeType: string} | null) => void;
+  onAnalyze: (data: SoilData, image?: {data: string, mimeType: string} | null, location?: {latitude: number | null, longitude: number | null} | null) => void;
   isLoading: boolean;
 }
 
@@ -116,12 +115,11 @@ const SoilInputForm: React.FC<SoilInputFormProps> = ({ onAnalyze, isLoading }) =
     e.preventDefault();
     let imagePayload: {data: string, mimeType: string} | null = null;
     if (imageFile && imagePreview) {
-        // The base64 string from FileReader includes the data URL prefix (e.g., "data:image/jpeg;base64,...").
-        // We need to strip this prefix for the Gemini API.
         const base64Data = imagePreview.split(',')[1];
         imagePayload = { data: base64Data, mimeType: imageFile.type };
     }
-    onAnalyze(formData, imagePayload);
+    const locationPayload = (latitude && longitude) ? { latitude, longitude } : null;
+    onAnalyze(formData, imagePayload, locationPayload);
   };
   
   const handleGetWeather = useCallback(async () => {
@@ -161,7 +159,6 @@ const SoilInputForm: React.FC<SoilInputFormProps> = ({ onAnalyze, isLoading }) =
     }
   }, [latitude, longitude, getLocation, geoError]);
   
-  // FIX: Use TranslationKey for labelKey to match the type expected by the `t` function.
   const inputFields: { name: keyof SoilData; labelKey: TranslationKey; min: number; max: number; step: number; unit: string }[] = [
     { name: 'ph', labelKey: 'soilPh', min: 0, max: 14, step: 0.1, unit: '' },
     { name: 'moisture', labelKey: 'moisture', min: 0, max: 100, step: 1, unit: '%' },

@@ -17,6 +17,20 @@ const SettingsContent: React.FC = () => {
   const handleUiLanguageChange = (lang: 'en' | 'te') => {
     setSettings(s => ({ ...s, uiLanguage: lang }));
   };
+  
+  const handleAlertsChange = (field: string, value: any) => {
+    const keys = field.split('.');
+    setSettings(s => {
+        const newAlerts = { ...s.alerts };
+        let current: any = newAlerts;
+        for (let i = 0; i < keys.length - 1; i++) {
+            current = current[keys[i]];
+        }
+        current[keys[keys.length - 1]] = value;
+        return { ...s, alerts: newAlerts };
+    });
+  };
+
 
   return (
     <div className="space-y-6 text-sm text-gray-700 dark:text-gray-300">
@@ -77,6 +91,38 @@ const SettingsContent: React.FC = () => {
           </button>
         </div>
       </div>
+       <div className="space-y-4 pt-4 border-t dark:border-slate-700">
+            <h3 className="font-semibold">{t('smartAlerts')}</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 -mt-2">{t('smartAlertsDesc')}</p>
+            <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                    type="checkbox"
+                    checked={settings.alerts.enabled}
+                    onChange={(e) => handleAlertsChange('enabled', e.target.checked)}
+                    className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                />
+                <span>{t('enableAlerts')}</span>
+            </label>
+            <div className={`space-y-3 ${!settings.alerts.enabled ? 'opacity-50 pointer-events-none' : ''}`}>
+                 <div>
+                    <label className="block mb-1 font-medium">{t('phRange')}</label>
+                    <div className="flex items-center gap-2">
+                        <input type="number" value={settings.alerts.ph.min} onChange={(e) => handleAlertsChange('ph.min', parseFloat(e.target.value))} className="w-full px-2 py-1 text-center border-gray-300 rounded-md shadow-sm dark:bg-slate-700 dark:border-slate-600 dark:text-gray-300" step="0.1" />
+                        <span>-</span>
+                        <input type="number" value={settings.alerts.ph.max} onChange={(e) => handleAlertsChange('ph.max', parseFloat(e.target.value))} className="w-full px-2 py-1 text-center border-gray-300 rounded-md shadow-sm dark:bg-slate-700 dark:border-slate-600 dark:text-gray-300" step="0.1" />
+                    </div>
+                </div>
+                <div>
+                    <label className="block mb-1 font-medium">{t('moistureRange')}</label>
+                     <div className="flex items-center gap-2">
+                        <input type="number" value={settings.alerts.moisture.min} onChange={(e) => handleAlertsChange('moisture.min', parseFloat(e.target.value))} className="w-full px-2 py-1 text-center border-gray-300 rounded-md shadow-sm dark:bg-slate-700 dark:border-slate-600 dark:text-gray-300" />
+                        <span>-</span>
+                        <input type="number" value={settings.alerts.moisture.max} onChange={(e) => handleAlertsChange('moisture.max', parseFloat(e.target.value))} className="w-full px-2 py-1 text-center border-gray-300 rounded-md shadow-sm dark:bg-slate-700 dark:border-slate-600 dark:text-gray-300" />
+                    </div>
+                </div>
+            </div>
+       </div>
+
     </div>
   );
 };

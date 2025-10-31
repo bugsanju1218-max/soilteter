@@ -16,6 +16,11 @@ const defaultSettings: Settings = {
   language: 'te-IN', // Voice language default to Telugu
   uiLanguage: 'en', // UI language
   theme: 'system',
+  alerts: {
+    enabled: false,
+    ph: { min: 6.0, max: 7.5 },
+    moisture: { min: 40, max: 70 },
+  },
 };
 
 export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
